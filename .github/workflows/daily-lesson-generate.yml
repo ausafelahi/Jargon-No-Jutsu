@@ -2,7 +2,8 @@ name: Daily Lesson Generation
 
 on:
   schedule:
-    - cron: "0 4 * * *"
+    # 09:00 UTC daily — adjust to your preferred publish time
+    - cron: "0 9 * * *"
   workflow_dispatch: {}
 
 jobs:
@@ -13,7 +14,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - run: npm ci
