@@ -12,6 +12,9 @@ export interface EmailProviderResult {
 
 type ProviderSender = (payload: EmailPayload) => Promise<void>;
 
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Jargon no Jutsu";
+const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? "onboarding@resend.dev";
+
 async function sendViaResend(payload: EmailPayload): Promise<void> {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -20,7 +23,7 @@ async function sendViaResend(payload: EmailPayload): Promise<void> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Jargon no Jutsu <lessons@jargonnojutsu.dev>",
+      from: `${FROM_NAME} <${FROM_ADDRESS}>`,
       to: payload.to,
       subject: payload.subject,
       html: payload.html,
@@ -38,7 +41,7 @@ async function sendViaBrevo(payload: EmailPayload): Promise<void> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      sender: { name: "Jargon no Jutsu", email: "lessons@jargonnojutsu.dev" },
+      sender: { name: FROM_NAME, email: FROM_ADDRESS },
       to: [{ email: payload.to }],
       subject: payload.subject,
       htmlContent: payload.html,
@@ -48,6 +51,7 @@ async function sendViaBrevo(payload: EmailPayload): Promise<void> {
     throw new Error(`Brevo failed: ${res.status} ${await res.text()}`);
 }
 
+/** Ordered per PRD: Resend (primary) -> Brevo (fallback). */
 export const PROVIDER_CHAIN: { name: string; send: ProviderSender }[] = [
   { name: "resend", send: sendViaResend },
   { name: "brevo", send: sendViaBrevo },

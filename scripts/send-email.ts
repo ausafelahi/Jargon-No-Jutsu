@@ -21,6 +21,11 @@ async function main() {
       console.warn(`  ${f.email}: ${f.error}`);
     }
   }
+
+  if (result.totalSubscribers > 0 && result.sent === 0) {
+    console.error("All sends failed — treating as a hard failure.");
+    process.exit(1);
+  }
 }
 
 main().catch((err) => {
