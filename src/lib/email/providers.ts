@@ -13,7 +13,15 @@ export interface EmailProviderResult {
 type ProviderSender = (payload: EmailPayload) => Promise<void>;
 
 const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Jargon no Jutsu";
-const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS ?? "onboarding@resend.dev";
+const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS;
+
+if (!FROM_ADDRESS) {
+  console.warn(
+    "EMAIL_FROM_ADDRESS is not set — email sends will fail. " +
+      "Set it to a verified sender: onboarding@resend.dev for Resend's test sender, " +
+      "or the email you verified as a Sender in Brevo's dashboard.",
+  );
+}
 
 async function sendViaResend(payload: EmailPayload): Promise<void> {
   const res = await fetch("https://api.resend.com/emails", {
@@ -51,7 +59,6 @@ async function sendViaBrevo(payload: EmailPayload): Promise<void> {
     throw new Error(`Brevo failed: ${res.status} ${await res.text()}`);
 }
 
-/** Ordered per PRD: Resend (primary) -> Brevo (fallback). */
 export const PROVIDER_CHAIN: { name: string; send: ProviderSender }[] = [
   { name: "resend", send: sendViaResend },
   { name: "brevo", send: sendViaBrevo },
