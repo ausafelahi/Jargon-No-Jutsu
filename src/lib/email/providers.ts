@@ -12,15 +12,20 @@ export interface EmailProviderResult {
 
 type ProviderSender = (payload: EmailPayload) => Promise<void>;
 
-const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Jargon no Jutsu";
-const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS;
+function getFromName(): string {
+  return process.env.EMAIL_FROM_NAME ?? "Jargon no Jutsu";
+}
 
-if (!FROM_ADDRESS) {
-  console.warn(
-    "EMAIL_FROM_ADDRESS is not set — email sends will fail. " +
-      "Set it to a verified sender: onboarding@resend.dev for Resend's test sender, " +
-      "or the email you verified as a Sender in Brevo's dashboard.",
-  );
+function getFromAddress(): string {
+  const address = process.env.EMAIL_FROM_ADDRESS;
+  if (!address) {
+    throw new Error(
+      "EMAIL_FROM_ADDRESS is not set. Set it to a verified sender: " +
+        "onboarding@resend.dev for Resend's test sender, or the email you " +
+        "verified as a Sender in Brevo's dashboard.",
+    );
+  }
+  return address;
 }
 
 async function sendViaResend(payload: EmailPayload): Promise<void> {
@@ -31,7 +36,7 @@ async function sendViaResend(payload: EmailPayload): Promise<void> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `${FROM_NAME} <${FROM_ADDRESS}>`,
+      from: `${getFromName()} <${getFromAddress()}>`,
       to: payload.to,
       subject: payload.subject,
       html: payload.html,
@@ -49,7 +54,7 @@ async function sendViaBrevo(payload: EmailPayload): Promise<void> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      sender: { name: FROM_NAME, email: FROM_ADDRESS },
+      sender: { name: getFromName(), email: getFromAddress() },
       to: [{ email: payload.to }],
       subject: payload.subject,
       htmlContent: payload.html,

@@ -1,11 +1,10 @@
 import type { Lesson } from "@/types/database";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-
 export function buildDigestEmail(lesson: Lesson): {
   subject: string;
   html: string;
 } {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const subject = `Daily Jutsu: ${lesson.concept} (via ${lesson.character_name})`;
 
   const html = `
@@ -50,7 +49,7 @@ export function buildDigestEmail(lesson: Lesson): {
                   </p>
                 </div>
 
-                <a href="${SITE_URL}/lessons/${lesson.id}"
+                <a href="${siteUrl}/lessons/${lesson.id}"
                    style="display:inline-block;margin-top:28px;background-color:#2DD4BF;color:#0f0f1f;font-weight:bold;font-size:14px;padding:12px 24px;border-radius:4px;text-decoration:none;">
                   READ FULL LESSON
                 </a>

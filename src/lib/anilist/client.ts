@@ -1,5 +1,3 @@
-const ANILIST_URL = process.env.ANILIST_API_URL ?? "https://graphql.anilist.co";
-
 const CHARACTER_QUERY = `
 query ($search: String) {
   Character(search: $search) {
@@ -47,15 +45,21 @@ interface AniListResponse {
 export async function fetchAniListCharacter(
   characterName: string,
 ): Promise<AniListCharacter> {
-  const res = await fetch(ANILIST_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({
-      query: CHARACTER_QUERY,
-      variables: { search: characterName },
-    }),
-    next: { revalidate: 3600 },
-  });
+  const res = await fetch(
+    process.env.ANILIST_API_URL ?? "https://graphql.anilist.co",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query: CHARACTER_QUERY,
+        variables: { search: characterName },
+      }),
+      next: { revalidate: 3600 },
+    },
+  );
 
   if (!res.ok) {
     throw new Error(`AniList request failed: ${res.status} ${res.statusText}`);
