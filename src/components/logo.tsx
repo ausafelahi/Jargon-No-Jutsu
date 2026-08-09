@@ -1,0 +1,24 @@
+export function Logo({ showWordmark = true }: { showWordmark?: boolean }) {
+  return (
+    <div className="flex items-center gap-2">
+      <svg width="32" height="32" viewBox="0 0 100 100" aria-hidden="true">
+        <path
+          d="M42 8 C 30 20, 24 32, 30 44 C 22 40, 18 48, 22 56 C 14 52, 12 62, 18 68 L 18 68 C 10 66, 8 74, 14 80 L 34 80 L 34 66 C 28 60, 30 50, 38 48 C 34 40, 40 32, 46 34 C 40 26, 46 14, 42 8 Z"
+          fill="#2DD4BF"
+        />
+        <path
+          d="M58 92 C 70 80, 76 68, 70 56 C 78 60, 82 52, 78 44 C 86 48, 88 38, 82 32 L 82 32 C 90 34, 92 26, 86 20 L 66 20 L 66 34 C 72 40, 70 50, 62 52 C 66 60, 60 68, 54 66 C 60 74, 54 86, 58 92 Z"
+          fill="#F75C82"
+        />
+        <path d="M50 38 L54 48 L64 50 L54 52 L50 62 L46 52 L36 50 L46 48 Z" fill="#FFFFFF" />
+      </svg>
+      {showWordmark && (
+        <span className="font-mono text-lg font-bold tracking-tight">
+          <span className="text-accent-teal">Jargon</span>{" "}
+          <span className="text-foreground-muted">no</span>{" "}
+          <span className="text-accent-pink">Jutsu</span>
+        </span>
+      )}
+    </div>
+  );
+}

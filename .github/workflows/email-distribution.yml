@@ -1,0 +1,32 @@
+name: Email Distribution
+
+on:
+  workflow_run:
+    workflows: ["Daily Lesson Generation"]
+    types: [completed]
+  workflow_dispatch: {}
+
+jobs:
+  send-digest:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Send daily digest
+        run: npm run send:email
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          EMAIL_PROVIDER: resend
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          EMAIL_DELIVERY_ENABLED: "true"

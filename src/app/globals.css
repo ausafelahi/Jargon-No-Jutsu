@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand default: dark navy "shinobi terminal" theme */
+    --background: 245 40% 7%;
+    --background-elevated: 245 30% 11%;
+    --foreground: 250 60% 92%;
+    --foreground-muted: 240 10% 65%;
+
+    --heading: 255 65% 82%;
+
+    --accent-teal: 174 72% 56%;
+    --accent-pink: 340 100% 71%;
+
+    --primary: 174 72% 56%;
+    --primary-foreground: 245 40% 7%;
+
+    --border: 245 20% 20%;
+    --radius: 0.5rem;
+  }
+
+  .light {
+    --background: 0 0% 100%;
+    --background-elevated: 240 20% 97%;
+    --foreground: 240 10% 4%;
+    --foreground-muted: 240 6% 40%;
+
+    --heading: 255 50% 40%;
+
+    --border: 240 6% 88%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Terminal-style eyebrow badge, e.g. "DAILY LESSON #042" */
+  .badge-terminal {
+    @apply inline-block rounded border border-[hsl(var(--accent-teal))]/40 bg-[hsl(var(--accent-teal))]/10
+      px-3 py-1 font-mono text-xs tracking-wider text-[hsl(var(--accent-teal))];
+  }
+
+  .badge-tier {
+    @apply inline-block rounded bg-[hsl(var(--accent-pink))] px-3 py-1 font-mono text-xs font-bold
+      tracking-wider text-[hsl(245_40%_7%)];
+  }
+
+  /* Card with a colored left accent border, used throughout lesson pages */
+  .card-accent {
+    @apply rounded-md border-l-2 bg-[hsl(var(--background-elevated))] p-6;
+  }
+
+  .card-accent-teal {
+    @apply card-accent border-[hsl(var(--accent-teal))];
+  }
+
+  .card-accent-pink {
+    @apply card-accent border-[hsl(var(--accent-pink))];
+  }
+
+  /* Terminal-style code block */
+  .code-terminal {
+    @apply rounded-md border border-border bg-[hsl(245_35%_6%)] p-5 font-mono text-sm leading-relaxed;
+  }
+}

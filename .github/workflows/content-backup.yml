@@ -1,0 +1,34 @@
+name: Content Backup
+
+on:
+  schedule:
+    # 03:00 UTC daily — off-peak, after generation/email have run
+    - cron: "0 3 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Export tables
+        run: npm run backup
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BACKUP_ENABLED: "true"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-${{ github.run_id }}
+          path: backups/
+          retention-days: 30
