@@ -9,6 +9,7 @@ export function LessonCard({ lesson }: { lesson: Lesson }) {
     >
       <div className="flex h-40 items-center justify-center overflow-hidden bg-background">
         {lesson.image_url ? (
+          //eslint-disable-next-line @next/next/no-img-element
           <img
             src={lesson.image_url}
             alt={lesson.character_name}

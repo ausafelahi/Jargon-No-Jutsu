@@ -77,7 +77,7 @@ export function LessonDetail({
 
           <div className="mt-6 flex h-80 w-full items-center justify-center overflow-hidden rounded-md border border-border bg-background">
             {lesson.image_url ? (
-              // -disable-next-line @next/next/no-img-element
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={lesson.image_url}
                 alt={`${lesson.character_name} — ${animeTitle}`}
