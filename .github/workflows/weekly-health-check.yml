@@ -27,5 +27,5 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
-          EMAIL_PROVIDER: resend
+          EMAIL_PROVIDER: ${{ secrets.EMAIL_PROVIDER }}
           ANILIST_API_URL: https://graphql.anilist.co
