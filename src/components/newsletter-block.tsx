@@ -31,7 +31,8 @@ export function NewsletterBlock() {
 
       {status === "success" ? (
         <p className="mt-6 font-mono text-sm text-accent-teal">
-          Transmission received. You&apos;re in.
+          Transmission received. You&apos;re in. Check your inbox in spam or
+          junk.
         </p>
       ) : (
         <form action={handleSubmit} className="mt-6">
