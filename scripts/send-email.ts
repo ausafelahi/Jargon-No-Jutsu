@@ -2,6 +2,15 @@ import { config } from "dotenv";
 config({ path: ".env.local" });
 config({ path: ".env" });
 
+console.log(
+  "DEBUG EMAIL_PROVIDER:",
+  JSON.stringify(process.env.EMAIL_PROVIDER),
+);
+console.log(
+  "DEBUG EMAIL_FROM_ADDRESS:",
+  JSON.stringify(process.env.EMAIL_FROM_ADDRESS),
+);
+
 import { sendDailyDigest } from "@/lib/email/send-daily-digest";
 
 async function main() {
