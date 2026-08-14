@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Logo } from "./logo";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/actions/auth";
+import { recordDailyActivity } from "@/lib/streaks/record-activity";
 
 const NAV_LINKS = [
   { href: "/lessons", label: "Lessons" },
@@ -14,6 +15,16 @@ export async function SiteNav() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
+
+  const streak = claims
+    ? await recordDailyActivity(claims.sub).catch((err) => {
+        console.warn(
+          "Streak recording failed:",
+          err instanceof Error ? err.message : err,
+        );
+        return null;
+      })
+    : null;
 
   return (
     <header className="border-b border-border bg-background">
@@ -37,6 +48,14 @@ export async function SiteNav() {
         <div className="flex items-center gap-4">
           {claims ? (
             <>
+              {streak && streak.currentStreak > 0 && (
+                <span
+                  className="flex items-center gap-1 font-mono text-sm text-accent-pink"
+                  title={`Longest streak: ${streak.longestStreak} days`}
+                >
+                  🔥 {streak.currentStreak}
+                </span>
+              )}
               <span className="font-mono text-sm text-foreground-muted">
                 {claims.email}
               </span>

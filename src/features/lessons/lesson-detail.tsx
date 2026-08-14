@@ -80,7 +80,7 @@ export function LessonDetail({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={lesson.image_url}
-                alt={`${lesson.character_name} — ${animeTitle}`}
+                alt={`${lesson.character_name}, ${animeTitle}`}
                 className="h-full max-w-[280px] object-contain"
               />
             ) : (
@@ -99,6 +99,18 @@ export function LessonDetail({
               {lesson.concept.toLowerCase()}, {lesson.lesson}
             </p>
           </div>
+
+          {quizQuestion && (
+            <div className="mt-6 rounded-md border border-border bg-background-elevated p-6">
+              <p className="font-mono text-xs tracking-wider text-accent-pink">
+                TRIAL BY FIRE
+              </p>
+              <p className="mt-3 font-semibold">{quizQuestion}</p>
+              <button className="mt-3 font-mono text-sm text-accent-teal underline">
+                REVEAL ANSWER
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -55,7 +55,7 @@ export default async function ScrollsPage() {
 
         {!error && lessons.length === 0 && (
           <p className="mt-12 text-foreground-muted">
-            No bookmarks yet — bookmark a lesson from its page to save it here.
+            No bookmarks yet. Bookmark a lesson from its page to save it here.
           </p>
         )}
 

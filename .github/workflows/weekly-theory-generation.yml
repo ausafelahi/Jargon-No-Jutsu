@@ -1,0 +1,27 @@
+name: Weekly Theory Generation
+
+on:
+  schedule:
+    # Every Wednesday at 10:00 UTC
+    - cron: "0 10 * * 3"
+  workflow_dispatch: {}
+
+jobs:
+  generate-theory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Generate theory article
+        run: npm run generate:theory
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

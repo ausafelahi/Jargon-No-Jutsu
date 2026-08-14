@@ -18,20 +18,21 @@ function buildPrompt({
   characterDescription,
 }: GenerateLessonInput) {
   return `You write daily software engineering lessons for "Jargon no Jutsu," a platform that teaches technical concepts through anime characters.
-
+ 
 Character: ${character}
 Anime: ${anime}
 Character context: ${characterDescription.slice(0, 500)}
 Concept to teach: ${concept}
-
+ 
 Write three things:
-1. explanation — a clear, beginner-friendly technical definition of "${concept}" in software engineering. Do not mention the character here; this is the plain technical definition.
-2. realWorldApplication — connect ${character}'s traits or behavior in ${anime} to "${concept}", explaining the parallel (this becomes the "Resonance" section). Avoid spoilers where possible.
-3. careerAdvice — one practical, actionable piece of career advice a junior developer can apply, tied to "${concept}".
-
+1. explanation: a clear, beginner-friendly technical definition of "${concept}" in software engineering. Do not mention the character here, this is the plain technical definition.
+2. realWorldApplication: connect ${character}'s traits or behavior in ${anime} to "${concept}", explaining the parallel (this becomes the "Resonance" section). Avoid spoilers where possible.
+3. careerAdvice: one practical, actionable piece of career advice a junior developer can apply, tied to "${concept}".
+ 
 Rules:
 - Beginner-friendly, practical, no fluff.
 - No spoilers where avoidable.
+- Do not use em dashes (—) anywhere. Use commas, periods, or separate sentences instead.
 - Return ONLY valid JSON, no markdown fences, no preamble, matching exactly:
 {"explanation": "...", "realWorldApplication": "...", "careerAdvice": "..."}`;
 }

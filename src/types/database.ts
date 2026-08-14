@@ -70,6 +70,52 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["subscribers"]["Insert"]>;
         Relationships: [];
       };
+      user_streaks: {
+        Row: {
+          user_id: string;
+          current_streak: number;
+          longest_streak: number;
+          last_active_date: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          current_streak?: number;
+          longest_streak?: number;
+          last_active_date?: string | null;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["user_streaks"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "user_streaks_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      theory_articles: {
+        Row: {
+          id: string;
+          concept: string;
+          title: string;
+          content: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          concept: string;
+          title: string;
+          content: string;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["theory_articles"]["Insert"]
+        >;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -81,3 +127,6 @@ export interface Database {
 export type Lesson = Database["public"]["Tables"]["lessons"]["Row"];
 export type Bookmark = Database["public"]["Tables"]["bookmarks"]["Row"];
 export type Subscriber = Database["public"]["Tables"]["subscribers"]["Row"];
+export type UserStreak = Database["public"]["Tables"]["user_streaks"]["Row"];
+export type TheoryArticle =
+  Database["public"]["Tables"]["theory_articles"]["Row"];

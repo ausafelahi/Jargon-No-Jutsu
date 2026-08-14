@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "generate:lesson": "tsx scripts/generate-lesson.ts",
+    "generate:theory": "tsx scripts/generate-theory.ts",
     "send:email": "tsx scripts/send-email.ts",
     "health:check": "tsx scripts/health-check.ts",
     "backup": "tsx scripts/backup.ts"
