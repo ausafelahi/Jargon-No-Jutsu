@@ -46,6 +46,7 @@ export async function generateTheoryBody(
           model: MODEL,
           messages: [{ role: "user", content: buildPrompt(concept) }],
           temperature: 0.6,
+          max_tokens: 2500,
         }),
       });
 
@@ -57,8 +58,18 @@ export async function generateTheoryBody(
 
       const json = await res.json();
       const raw: string = json.choices?.[0]?.message?.content ?? "";
+      const finishReason = json.choices?.[0]?.finish_reason;
       const cleaned = raw.replace(/^```json\s*|```$/g, "").trim();
-      const parsed = JSON.parse(cleaned);
+
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (parseErr) {
+        throw new Error(
+          `Failed to parse model output as JSON (finish_reason: ${finishReason ?? "unknown"}). ` +
+            `Raw output (last 300 chars): ...${cleaned.slice(-300)}`,
+        );
+      }
 
       return generatedTheorySchema.parse(parsed);
     } catch (err) {

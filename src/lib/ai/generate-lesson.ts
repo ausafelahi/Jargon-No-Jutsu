@@ -2,7 +2,7 @@ import { generatedLessonSchema, type GeneratedLessonBody } from "./schema";
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 3;
 
 interface GenerateLessonInput {
   character: string;
@@ -18,17 +18,17 @@ function buildPrompt({
   characterDescription,
 }: GenerateLessonInput) {
   return `You write daily software engineering lessons for "Jargon no Jutsu," a platform that teaches technical concepts through anime characters.
- 
+
 Character: ${character}
 Anime: ${anime}
 Character context: ${characterDescription.slice(0, 500)}
 Concept to teach: ${concept}
- 
+
 Write three things:
 1. explanation: a clear, beginner-friendly technical definition of "${concept}" in software engineering. Do not mention the character here, this is the plain technical definition.
 2. realWorldApplication: connect ${character}'s traits or behavior in ${anime} to "${concept}", explaining the parallel (this becomes the "Resonance" section). Avoid spoilers where possible.
 3. careerAdvice: one practical, actionable piece of career advice a junior developer can apply, tied to "${concept}".
- 
+
 Rules:
 - Beginner-friendly, practical, no fluff.
 - No spoilers where avoidable.
@@ -54,6 +54,7 @@ export async function generateLessonBody(
           model: MODEL,
           messages: [{ role: "user", content: buildPrompt(input) }],
           temperature: 0.8,
+          max_tokens: 1200,
         }),
       });
 
@@ -65,8 +66,18 @@ export async function generateLessonBody(
 
       const json = await res.json();
       const raw: string = json.choices?.[0]?.message?.content ?? "";
+      const finishReason = json.choices?.[0]?.finish_reason;
       const cleaned = raw.replace(/^```json\s*|```$/g, "").trim();
-      const parsed = JSON.parse(cleaned);
+
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (parseErr) {
+        throw new Error(
+          `Failed to parse model output as JSON (finish_reason: ${finishReason ?? "unknown"}). ` +
+            `Raw output (last 300 chars): ...${cleaned.slice(-300)}`,
+        );
+      }
 
       return generatedLessonSchema.parse(parsed);
     } catch (err) {
