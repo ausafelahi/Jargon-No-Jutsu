@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/rate-limit/check";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -8,6 +9,18 @@ export async function POST(request: NextRequest) {
 
   if (!claims) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { allowed } = await checkRateLimit(claims.sub, {
+    name: "bookmarks",
+    limit: 20,
+    windowSeconds: 60,
+  });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Try again shortly." },
+      { status: 429 },
+    );
   }
 
   const body = await request.json().catch(() => null);
@@ -24,7 +37,6 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    // Unique constraint violation = already bookmarked, treat as idempotent success
     if (error.code === "23505") {
       return NextResponse.json({ bookmarked: true });
     }
@@ -41,6 +53,18 @@ export async function DELETE(request: NextRequest) {
 
   if (!claims) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { allowed } = await checkRateLimit(claims.sub, {
+    name: "bookmarks",
+    limit: 20,
+    windowSeconds: 60,
+  });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Try again shortly." },
+      { status: 429 },
+    );
   }
 
   const { searchParams } = new URL(request.url);

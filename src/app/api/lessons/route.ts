@@ -1,9 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit/check";
 
 const PAGE_SIZE = 20;
 
 export async function GET(request: NextRequest) {
+  const ip = getClientIp(request.headers);
+  const { allowed } = await checkRateLimit(ip, {
+    name: "lessons",
+    limit: 60,
+    windowSeconds: 60,
+  });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Try again shortly." },
+      { status: 429 },
+    );
+  }
+
   const { searchParams } = new URL(request.url);
 
   const sort = searchParams.get("sort") === "oldest" ? "oldest" : "newest";
