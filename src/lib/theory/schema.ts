@@ -5,8 +5,8 @@ export const generatedTheorySchema = z.object({
   content: z
     .string()
     .min(
-      600,
-      "Theory content too short — this is supposed to be long-form, not a summary",
+      400,
+      "Theory content too short. This is supposed to be long-form, not a summary.",
     )
     .max(6000),
 });
