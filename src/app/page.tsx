@@ -15,6 +15,14 @@ export default async function HomePage() {
 
   const latest = lessons?.[0];
 
+  const { data: quizQuestion } = latest
+    ? await supabase
+        .from("quiz_questions")
+        .select("*")
+        .eq("concept", latest.concept)
+        .maybeSingle()
+    : { data: null };
+
   return (
     <>
       <SiteNav />
@@ -25,6 +33,7 @@ export default async function HomePage() {
             lessonNumber={count ?? 1}
             animeTitle={latest.anime_name}
             characterTier={latest.tier ?? undefined}
+            quizQuestion={quizQuestion}
           />
         ) : (
           <div className="mx-auto max-w-2xl px-6 py-24 text-center">

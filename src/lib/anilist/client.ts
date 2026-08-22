@@ -45,6 +45,8 @@ interface AniListResponse {
 const MAX_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 1500;
 
+class AniListTerminalError extends Error {}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -76,21 +78,23 @@ export async function fetchAniListCharacter(
       if (!res.ok) {
         const bodyText = await res.text().catch(() => "<no body>");
         throw new Error(
-          `AniList request failed for "${characterName}": ${res.status} ${res.statusText} — ${bodyText.slice(0, 300)}`,
+          `AniList request failed for "${characterName}": ${res.status} ${res.statusText}. Body: ${bodyText.slice(0, 300)}`,
         );
       }
 
       const json = (await res.json()) as AniListResponse;
 
       if (json.errors?.length) {
-        throw new Error(
+        throw new AniListTerminalError(
           `AniList error for "${characterName}": ${json.errors.map((e) => e.message).join("; ")}`,
         );
       }
 
       const character = json.data.Character;
       if (!character) {
-        throw new Error(`AniList: character "${characterName}" not found`);
+        throw new AniListTerminalError(
+          `AniList: character "${characterName}" not found`,
+        );
       }
 
       const media = character.media.nodes[0]?.title;
@@ -106,9 +110,8 @@ export async function fetchAniListCharacter(
     } catch (err) {
       lastError = err;
 
-      const isNotFound =
-        err instanceof Error && err.message.includes("not found");
-      if (isNotFound || attempt === MAX_ATTEMPTS) {
+      const isTerminal = err instanceof AniListTerminalError;
+      if (isTerminal || attempt === MAX_ATTEMPTS) {
         throw lastError;
       }
 

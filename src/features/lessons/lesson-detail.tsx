@@ -1,13 +1,14 @@
-import type { Lesson } from "@/types/database";
+import type { Lesson, QuizQuestion } from "@/types/database";
 import { BookmarkButton } from "@/features/bookmarks/bookmark-button";
 import { ShareButton } from "@/components/share-button";
+import { QuizSection } from "@/components/quiz-section";
 
 interface LessonPageProps {
   lesson: Lesson;
   lessonNumber: number;
   animeTitle: string;
   characterTier?: string;
-  quizQuestion?: string;
+  quizQuestion?: QuizQuestion | null;
   codeSnippet?: string;
   codeLanguage?: string;
 }
@@ -17,7 +18,7 @@ export function LessonDetail({
   lessonNumber,
   animeTitle,
   characterTier = "SHINOBI TIER",
-  quizQuestion,
+  quizQuestion = null,
   codeSnippet,
   codeLanguage = "JS",
 }: LessonPageProps) {
@@ -105,18 +106,7 @@ export function LessonDetail({
               {lesson.concept.toLowerCase()}, {lesson.lesson}
             </p>
           </div>
-
-          {quizQuestion && (
-            <div className="mt-6 rounded-md border border-border bg-background-elevated p-6">
-              <p className="font-mono text-xs tracking-wider text-accent-pink">
-                TRIAL BY FIRE
-              </p>
-              <p className="mt-3 font-semibold">{quizQuestion}</p>
-              <button className="mt-3 font-mono text-sm text-accent-teal underline">
-                REVEAL ANSWER
-              </button>
-            </div>
-          )}
+          <QuizSection question={quizQuestion} />
         </div>
       </div>
     </div>

@@ -55,6 +55,12 @@ export default async function LessonPage({ params }: LessonPageProps) {
     .select("*", { count: "exact", head: true })
     .lte("created_at", lesson.created_at);
 
+  const { data: quizQuestion } = await supabase
+    .from("quiz_questions")
+    .select("*")
+    .eq("concept", lesson.concept)
+    .maybeSingle();
+
   return (
     <>
       <SiteNav />
@@ -64,6 +70,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           lessonNumber={count ?? 1}
           animeTitle={lesson.anime_name}
           characterTier={lesson.tier ?? undefined}
+          quizQuestion={quizQuestion}
         />
       </main>
       <SiteFooter />

@@ -116,6 +116,67 @@ export interface Database {
         >;
         Relationships: [];
       };
+      quiz_questions: {
+        Row: {
+          id: string;
+          concept: string;
+          question: string;
+          options: string[];
+          correct_index: number;
+          explanation: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          concept: string;
+          question: string;
+          options: string[];
+          correct_index: number;
+          explanation: string;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["quiz_questions"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      quiz_attempts: {
+        Row: {
+          id: string;
+          user_id: string;
+          question_id: string;
+          selected_index: number;
+          was_correct: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          question_id: string;
+          selected_index: number;
+          was_correct: boolean;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["quiz_attempts"]["Insert"]
+        >;
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quiz_attempts_question_id_fkey";
+            columns: ["question_id"];
+            isOneToOne: false;
+            referencedRelation: "quiz_questions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -135,3 +196,6 @@ export type Subscriber = Database["public"]["Tables"]["subscribers"]["Row"];
 export type UserStreak = Database["public"]["Tables"]["user_streaks"]["Row"];
 export type TheoryArticle =
   Database["public"]["Tables"]["theory_articles"]["Row"];
+export type QuizQuestion =
+  Database["public"]["Tables"]["quiz_questions"]["Row"];
+export type QuizAttempt = Database["public"]["Tables"]["quiz_attempts"]["Row"];
