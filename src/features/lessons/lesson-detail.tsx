@@ -1,5 +1,6 @@
 import type { Lesson } from "@/types/database";
 import { BookmarkButton } from "@/features/bookmarks/bookmark-button";
+import { ShareButton } from "@/components/share-button";
 
 interface LessonPageProps {
   lesson: Lesson;
@@ -28,7 +29,12 @@ export function LessonDetail({
             <span className="badge-terminal">
               DAILY LESSON #{String(lessonNumber).padStart(3, "0")}
             </span>
-            <BookmarkButton lessonId={lesson.id} />
+            <div className="flex gap-2">
+              <ShareButton
+                title={`${lesson.concept} via ${lesson.character_name}`}
+              />
+              <BookmarkButton lessonId={lesson.id} />
+            </div>
           </div>
           <h1 className="mt-4 border-l-2 border-heading pl-4 text-5xl font-extrabold text-heading">
             {lesson.concept}

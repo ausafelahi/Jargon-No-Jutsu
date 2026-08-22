@@ -11,6 +11,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "generate:lesson": "tsx scripts/generate-lesson.ts",
     "generate:theory": "tsx scripts/generate-theory.ts",
     "send:email": "tsx scripts/send-email.ts",
@@ -40,10 +42,12 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "dotenv": "^16.4.0"
+    "dotenv": "^16.4.0",
+    "vitest": "^2.1.0"
   },
   "allowScripts": {
     "esbuild@0.28.1": true,
+    "esbuild@0.21.5": true,
     "unrs-resolver@1.12.2": true
   }
 }

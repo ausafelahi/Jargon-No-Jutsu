@@ -40,19 +40,24 @@ interface ParsedTheoryOutput {
   content: string;
 }
 
-
-function parseTheoryOutput(raw: string): ParsedTheoryOutput {
+export function parseTheoryOutput(raw: string): ParsedTheoryOutput {
   const titleIndex = raw.indexOf(TITLE_MARKER);
   const contentMarkerIndex = raw.indexOf(CONTENT_MARKER);
 
-  if (titleIndex === -1 || contentMarkerIndex === -1 || contentMarkerIndex < titleIndex) {
+  if (
+    titleIndex === -1 ||
+    contentMarkerIndex === -1 ||
+    contentMarkerIndex < titleIndex
+  ) {
     throw new Error(
       `Output missing expected markers ("${TITLE_MARKER}" / "${CONTENT_MARKER}"). ` +
-        `Raw output (first 300 chars): ${raw.slice(0, 300)}`
+        `Raw output (first 300 chars): ${raw.slice(0, 300)}`,
     );
   }
 
-  const title = raw.slice(titleIndex + TITLE_MARKER.length, contentMarkerIndex).trim();
+  const title = raw
+    .slice(titleIndex + TITLE_MARKER.length, contentMarkerIndex)
+    .trim();
   const content = raw.slice(contentMarkerIndex + CONTENT_MARKER.length).trim();
 
   if (!title) {
@@ -65,7 +70,9 @@ function parseTheoryOutput(raw: string): ParsedTheoryOutput {
   return { title, content };
 }
 
-export async function generateTheoryBody(concept: string): Promise<GeneratedTheoryBody> {
+export async function generateTheoryBody(
+  concept: string,
+): Promise<GeneratedTheoryBody> {
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
@@ -85,7 +92,9 @@ export async function generateTheoryBody(concept: string): Promise<GeneratedTheo
       });
 
       if (!res.ok) {
-        throw new Error(`OpenRouter request failed: ${res.status} ${res.statusText}`);
+        throw new Error(
+          `OpenRouter request failed: ${res.status} ${res.statusText}`,
+        );
       }
 
       const json = await res.json();
@@ -93,20 +102,25 @@ export async function generateTheoryBody(concept: string): Promise<GeneratedTheo
       const finishReason = json.choices?.[0]?.finish_reason;
 
       if (!raw.trim()) {
-        throw new Error(`Empty response from model (finish_reason: ${finishReason ?? "unknown"}).`);
+        throw new Error(
+          `Empty response from model (finish_reason: ${finishReason ?? "unknown"}).`,
+        );
       }
 
       const parsed = parseTheoryOutput(raw);
       return generatedTheorySchema.parse(parsed);
     } catch (err) {
       lastError = err;
-      console.warn(`Theory generation attempt ${attempt}/${MAX_ATTEMPTS} failed:`, err instanceof Error ? err.message : err);
+      console.warn(
+        `Theory generation attempt ${attempt}/${MAX_ATTEMPTS} failed:`,
+        err instanceof Error ? err.message : err,
+      );
     }
   }
 
   throw new Error(
     `Theory generation failed after ${MAX_ATTEMPTS} attempts: ${
       lastError instanceof Error ? lastError.message : String(lastError)
-    }`
+    }`,
   );
 }

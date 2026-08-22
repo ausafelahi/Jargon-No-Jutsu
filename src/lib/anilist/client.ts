@@ -123,6 +123,6 @@ export async function fetchAniListCharacter(
   throw lastError;
 }
 
-function stripHtml(input: string): string {
+export function stripHtml(input: string): string {
   return input.replace(/<[^>]*>/g, "").trim();
 }
